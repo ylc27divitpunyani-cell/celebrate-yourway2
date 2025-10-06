@@ -24,8 +24,11 @@ export type Database = {
           pincode: string
           service_id: string
           slot: string
+          standard_service_id: string | null
           status: string
+          type: string | null
           user_id: string
+          vendor_id: string | null
         }
         Insert: {
           address: string
@@ -36,8 +39,11 @@ export type Database = {
           pincode: string
           service_id: string
           slot: string
+          standard_service_id?: string | null
           status?: string
+          type?: string | null
           user_id: string
+          vendor_id?: string | null
         }
         Update: {
           address?: string
@@ -48,8 +54,11 @@ export type Database = {
           pincode?: string
           service_id?: string
           slot?: string
+          standard_service_id?: string | null
           status?: string
+          type?: string | null
           user_id?: string
+          vendor_id?: string | null
         }
         Relationships: [
           {
@@ -67,10 +76,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "bookings_standard_service_id_fkey"
+            columns: ["standard_service_id"]
+            isOneToOne: false
+            referencedRelation: "standard_services"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "bookings_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
             referencedColumns: ["id"]
           },
         ]
@@ -184,6 +207,145 @@ export type Database = {
           is_active?: boolean
           price?: number
           title?: string
+        }
+        Relationships: []
+      }
+      standard_services: {
+        Row: {
+          category: string
+          city: string
+          created_at: string
+          description: string | null
+          duration: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          price: number
+          title: string
+        }
+        Insert: {
+          category: string
+          city: string
+          created_at?: string
+          description?: string | null
+          duration?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          price: number
+          title: string
+        }
+        Update: {
+          category?: string
+          city?: string
+          created_at?: string
+          description?: string | null
+          duration?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          price?: number
+          title?: string
+        }
+        Relationships: []
+      }
+      vendor_reviews: {
+        Row: {
+          booking_id: string | null
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number
+          user_id: string
+          vendor_id: string
+        }
+        Insert: {
+          booking_id?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          user_id: string
+          vendor_id: string
+        }
+        Update: {
+          booking_id?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          user_id?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_reviews_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_reviews_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_reviews_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendors: {
+        Row: {
+          category: string
+          city: string
+          created_at: string
+          description: string | null
+          id: string
+          images: Json | null
+          max_price: number
+          min_price: number
+          name: string
+          phone: string | null
+          rating: number | null
+          reviews_count: number | null
+          verified: boolean | null
+        }
+        Insert: {
+          category: string
+          city: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: Json | null
+          max_price: number
+          min_price: number
+          name: string
+          phone?: string | null
+          rating?: number | null
+          reviews_count?: number | null
+          verified?: boolean | null
+        }
+        Update: {
+          category?: string
+          city?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: Json | null
+          max_price?: number
+          min_price?: number
+          name?: string
+          phone?: string | null
+          rating?: number | null
+          reviews_count?: number | null
+          verified?: boolean | null
         }
         Relationships: []
       }

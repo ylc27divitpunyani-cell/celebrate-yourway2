@@ -60,15 +60,56 @@ const Index = () => {
             Book the perfect services for your special moments
           </p>
           <div className="flex gap-4 justify-center animate-fade-in">
-            <Link to="/services">
-              <Button size="lg" variant="secondary" className="text-lg px-8">
-                Browse Services
-              </Button>
-            </Link>
             <Link to="/auth">
-              <Button size="lg" className="text-lg px-8 bg-white/20 backdrop-blur-sm border-white/30 hover:bg-white/30">
+              <Button size="lg" variant="secondary" className="text-lg px-8">
                 Get Started
               </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Service Categories */}
+      <section className="py-16 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+              Choose Your Celebration Style
+            </h2>
+            <p className="text-muted-foreground text-lg">Select from our two service models</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <Link to="/standard-services">
+              <div className="group relative overflow-hidden rounded-lg border border-border bg-card hover:shadow-xl transition-all duration-300 cursor-pointer h-[300px]">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 group-hover:from-primary/30 group-hover:to-secondary/30 transition-all" />
+                <div className="relative p-8 h-full flex flex-col justify-center items-center text-center">
+                  <div className="text-6xl mb-4">🎉</div>
+                  <h3 className="text-2xl font-bold mb-3">Everyday Celebrations</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Pre-priced packages for birthdays, anniversaries, baby showers & more
+                  </p>
+                  <Button variant="secondary" className="mt-auto">
+                    Browse Packages
+                  </Button>
+                </div>
+              </div>
+            </Link>
+
+            <Link to="/vendors">
+              <div className="group relative overflow-hidden rounded-lg border border-border bg-card hover:shadow-xl transition-all duration-300 cursor-pointer h-[300px]">
+                <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-primary/20 group-hover:from-accent/30 group-hover:to-primary/30 transition-all" />
+                <div className="relative p-8 h-full flex flex-col justify-center items-center text-center">
+                  <div className="text-6xl mb-4">💍</div>
+                  <h3 className="text-2xl font-bold mb-3">Weddings & Premium Events</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Personalized vendors for mehendi, makeup, photography, decor & more
+                  </p>
+                  <Button variant="secondary" className="mt-auto">
+                    Find Vendors
+                  </Button>
+                </div>
+              </div>
             </Link>
           </div>
         </div>

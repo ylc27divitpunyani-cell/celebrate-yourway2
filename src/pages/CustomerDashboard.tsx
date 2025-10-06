@@ -30,7 +30,9 @@ export default function CustomerDashboard() {
       .from('bookings')
       .select(`
         *,
-        services (title, price, category)
+        services (title, price, category),
+        vendors (name, category),
+        standard_services (title, price, category)
       `)
       .eq('user_id', session.user.id)
       .order('created_at', { ascending: false });
@@ -82,58 +84,80 @@ export default function CustomerDashboard() {
           </Card>
         ) : (
           <div className="grid gap-6">
-            {bookings.map((booking) => (
-              <Card key={booking.id}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-xl">{booking.services?.title}</CardTitle>
-                      <Badge variant="secondary" className="mt-2 capitalize">
-                        {booking.services?.category}
+            {bookings.map((booking) => {
+              const isStandard = booking.type === 'standard';
+              const serviceTitle = isStandard 
+                ? booking.standard_services?.title 
+                : booking.vendors?.name || booking.services?.title;
+              const serviceCategory = isStandard
+                ? booking.standard_services?.category
+                : booking.vendors?.category || booking.services?.category;
+              const servicePrice = isStandard
+                ? booking.standard_services?.price
+                : booking.services?.price;
+
+              return (
+                <Card key={booking.id}>
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <CardTitle className="text-xl">{serviceTitle}</CardTitle>
+                          <Badge variant="outline" className="text-xs">
+                            {isStandard ? '🎉 Package' : '💍 Vendor'}
+                          </Badge>
+                        </div>
+                        <Badge variant="secondary" className="capitalize">
+                          {serviceCategory}
+                        </Badge>
+                      </div>
+                      <Badge className={getStatusColor(booking.status)}>
+                        {booking.status.toUpperCase()}
                       </Badge>
                     </div>
-                    <Badge className={getStatusColor(booking.status)}>
-                      {booking.status.toUpperCase()}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2 text-sm">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-medium">Event Date:</span>
-                        <span>{new Date(booking.event_date).toLocaleDateString()}</span>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2 text-sm">
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-medium">Event Date:</span>
+                          <span>{new Date(booking.event_date).toLocaleDateString()}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-medium">Time Slot:</span>
+                          <span className="capitalize">{booking.slot}</span>
+                        </div>
+                        <div className="flex items-start gap-2 text-sm">
+                          <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
+                          <div>
+                            <p className="font-medium">Address:</p>
+                            <p className="text-muted-foreground">{booking.address}</p>
+                            <p className="text-muted-foreground">PIN: {booking.pincode}</p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-medium">Time Slot:</span>
-                        <span className="capitalize">{booking.slot}</span>
-                      </div>
-                      <div className="flex items-start gap-2 text-sm">
-                        <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                        <div>
-                          <p className="font-medium">Address:</p>
-                          <p className="text-muted-foreground">{booking.address}</p>
-                          <p className="text-muted-foreground">PIN: {booking.pincode}</p>
+                      <div className="flex flex-col justify-between">
+                        {servicePrice && (
+                          <div className="text-right">
+                            <p className="text-sm text-muted-foreground mb-1">
+                              {isStandard ? 'Package Price' : 'Starting From'}
+                            </p>
+                            <p className="text-2xl font-bold text-primary">
+                              ₹{servicePrice.toLocaleString()}
+                            </p>
+                          </div>
+                        )}
+                        <div className="text-right text-sm text-muted-foreground">
+                          Booked on {new Date(booking.created_at).toLocaleDateString()}
                         </div>
                       </div>
                     </div>
-                    <div className="flex flex-col justify-between">
-                      <div className="text-right">
-                        <p className="text-sm text-muted-foreground mb-1">Total Amount</p>
-                        <p className="text-2xl font-bold text-primary">
-                          ₹{booking.services?.price.toLocaleString()}
-                        </p>
-                      </div>
-                      <div className="text-right text-sm text-muted-foreground">
-                        Booked on {new Date(booking.created_at).toLocaleDateString()}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
       </div>
