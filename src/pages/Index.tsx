@@ -1,14 +1,21 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/Navbar";
 import { ServiceCard } from "@/components/ServiceCard";
-import { Sparkles, Heart, Shield, Clock } from "lucide-react";
+import { Sparkles, Heart, Shield, Clock, MapPin, LogIn } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import heroImage from "@/assets/hero-celebration.jpg";
 import mehendi from "@/assets/mehendi-service.jpg";
 import balloon from "@/assets/balloon-decor-service.jpg";
 import photography from "@/assets/photography-service.jpg";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const serviceImages: Record<string, string> = {
   "mehendi": mehendi,
@@ -17,10 +24,23 @@ const serviceImages: Record<string, string> = {
 };
 
 const Index = () => {
+  const navigate = useNavigate();
   const [featuredServices, setFeaturedServices] = useState<any[]>([]);
+  const [user, setUser] = useState<any>(null);
+  const [selectedCity, setSelectedCity] = useState("Mumbai");
 
   useEffect(() => {
     fetchFeaturedServices();
+    
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const fetchFeaturedServices = async () => {
@@ -39,9 +59,51 @@ const Index = () => {
     }
   };
 
+  const handleAuthClick = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/auth');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+      
+      {/* Top Bar with Location and Auth */}
+      <div className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <MapPin className="h-5 w-5 text-primary" />
+              <Select value={selectedCity} onValueChange={setSelectedCity}>
+                <SelectTrigger className="w-[180px] border-none focus:ring-0 font-medium">
+                  <SelectValue placeholder="Select city" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Mumbai">Mumbai</SelectItem>
+                  <SelectItem value="Delhi">Delhi</SelectItem>
+                  <SelectItem value="Bangalore">Bangalore</SelectItem>
+                  <SelectItem value="Pune">Pune</SelectItem>
+                  <SelectItem value="Hyderabad">Hyderabad</SelectItem>
+                  <SelectItem value="Chennai">Chennai</SelectItem>
+                  <SelectItem value="Kolkata">Kolkata</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <Button 
+              variant="outline" 
+              onClick={handleAuthClick}
+              className="gap-2"
+            >
+              <LogIn className="h-4 w-4" />
+              {user ? 'My Account' : 'Login / Sign Up'}
+            </Button>
+          </div>
+        </div>
+      </div>
       
       {/* Hero Section */}
       <section className="relative h-[600px] flex items-center justify-center overflow-hidden">

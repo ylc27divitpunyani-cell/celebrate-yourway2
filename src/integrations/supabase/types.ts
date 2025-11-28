@@ -22,7 +22,7 @@ export type Database = {
           event_date: string
           id: string
           pincode: string
-          service_id: string
+          service_id: string | null
           slot: string
           standard_service_id: string | null
           status: string
@@ -37,7 +37,7 @@ export type Database = {
           event_date: string
           id?: string
           pincode: string
-          service_id: string
+          service_id?: string | null
           slot: string
           standard_service_id?: string | null
           status?: string
@@ -52,7 +52,7 @@ export type Database = {
           event_date?: string
           id?: string
           pincode?: string
-          service_id?: string
+          service_id?: string | null
           slot?: string
           standard_service_id?: string | null
           status?: string
