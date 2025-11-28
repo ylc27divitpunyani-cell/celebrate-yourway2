@@ -67,6 +67,7 @@ export default function BookVendor() {
     const { error } = await supabase.from('bookings').insert({
       user_id: session.user.id,
       vendor_id: id,
+      service_id: null,
       type: 'vendor',
       event_date: formData.event_date,
       slot: formData.slot,
